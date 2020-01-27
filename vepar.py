@@ -12,6 +12,7 @@ from tqdm import tqdm
 
 from argument import parse_argument
 from convert import convert
+from vepar_file import VeparFile
 
 if __name__ == "__main__":
     args = parse_argument()
@@ -19,6 +20,11 @@ if __name__ == "__main__":
     print("[+] Initialization")
     filenames = glob(args.input + "/*.pgm")
     filenames = sorted(filenames, key=lambda f: int(re.sub('\D', '', f)))
+    
+    vepar_file_info = None
+    if len(args.config) > 0:
+        print("[+] Parsing vepar file")
+        vepar_file_info = VeparFile.parse_file(args.config)
     
     if args.save_ppm:
         if os.path.exists("./resulting_ppm"):
@@ -37,5 +43,7 @@ if __name__ == "__main__":
             plt.draw()
             plt.pause(1 / args.cadence)
             plt.clf()
+            
+    print("[+] End")
     
     
