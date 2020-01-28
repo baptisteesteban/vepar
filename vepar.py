@@ -14,6 +14,7 @@ from argument import parse_argument
 from convert import convert
 from vepar_file import VeparFile
 from bob import bob_deinterlace
+from visualize import Visualization
 
 if __name__ == "__main__":
     args = parse_argument()
@@ -29,13 +30,12 @@ if __name__ == "__main__":
         vepar_file_info = VeparFile.parse_file(args.config)
         if vepar_file_info.frame_period:
             cadence_ips = 27000000 // vepar_file_info.frame_period
-        print(str(vepar_file_info))
     
     print("[+] Configure output ppm directory")
     if os.path.exists("./resulting_ppm"):
         shutil.rmtree("./resulting_ppm")            
     os.mkdir("./resulting_ppm")
-        
+ 
     print("[+] Processing")
     for i in tqdm(range(len(filenames))):
         filename = filenames[i]
@@ -43,17 +43,12 @@ if __name__ == "__main__":
         frame1, frame2 = bob_deinterlace(image_out, None)
         io.imsave("./resulting_ppm/" + str(re.sub('\D', '', filename)) + "_1.ppm", frame1)
         io.imsave("./resulting_ppm/" + str(re.sub('\D', '', filename)) + "_2.ppm", frame2)
-        
+
+    
     if args.visualize:
-        filenames = glob("./resulting_ppm/*.ppm")
-        filenames = sorted(filenames, key=lambda f: int(re.sub('\D', '', f)))   
-        for filename in filenames:
-            frame = io.imread(filename)
-            plt.imshow(frame)
-            plt.draw()
-            plt.pause(1 / args.cadence)
-            plt.clf()
-            
+        v = Visualization()
+        v.visualize()
+        
     print("[+] End")
     
     
