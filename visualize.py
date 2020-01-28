@@ -12,7 +12,7 @@ class Visualization:
         self.interval = interval
         
     def update(self, *args):
-        if self.i == self.filenames:
+        if self.i == len(self.filenames):
             self.i = 0
         self.im.set_array(io.imread(self.filenames[self.i]))
         self.i += 1
